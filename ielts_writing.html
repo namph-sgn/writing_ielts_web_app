@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.grid-container {
+  display: grid;
+  height: 100vh;
+  width: 100vw;
+  grid-template-rows: 10% 90%;
+  grid-template-columns: 50% 50%;
+  background-color: #2196F3;
+  padding: 10px;
+}
+.grid-image {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  font-size: 10px;
+  text-align: center;
+  /* Position */
+  grid-column-start: 1;
+  grid-column-end: 1;
+  grid-row-start: 2;
+  grid-row-end: 2;
+}
+.grid-type {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  font-size: 14px;
+  text-align: center;
+  /* Position */
+  grid-column-start: 2;
+  grid-column-end: 2;
+  grid-row-start: 2;
+  grid-row-end: 2;
+}
+.grid-timeclock {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  font-size: 30px;
+  text-align: center;
+  /* Position */
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 1;
+  grid-row-end: 1;
+}
+.grid-image img {
+  height: 100%;
+  width: 100%;
+}
+textarea {
+    width: 99%;
+    height: 90%;
+    font-size: 16px;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
+}
+</style>
+<!-- reference Moment.js library -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.1.1/howler.min.js"></script>
+</head>
+<body>
+<div class="grid-container">
+    <div class="grid-timeclock">
+        <p id="timeclock"></p>
+    </div>
+    <div class="grid-type">
+        <textarea id="word" oninput='countWord()'></textarea>
+        <br><br>
+
+        <p> Word Count:
+            <span id="show">0</span>
+    </div>
+    <div class="grid-image">
+        <input type="file"  accept="image/*" name="image" id="file"  onchange="loadFile(event)" style="display: none;">
+        <p><label for="file" style="cursor: pointer;">Upload Image</label></p>
+        <img id="output"/>	
+    </div>
+</div>
+<script>
+var loadFile = function(event) {
+    var image = document.getElementById('output');
+    image.src = URL.createObjectURL(event.target.files[0]);
+};
+</script>
+<script>
+// Set the date we're counting down to
+var countDownDate = new Date();
+countDownDate.setMinutes(countDownDate.getMinutes() + 60);
+var sound = new Howl({
+    src: ['Alarmclockringing.mp3'],
+    volume: 0.5,
+    onend: function () {
+    }
+});
+// Update the count down every 1 second
+var x = setInterval(function() {
+
+  // Get today's date and time
+  var now = new Date().getTime();
+
+  // Find the distance between now and the count down date
+  var distance = countDownDate - now;
+
+  // Time calculations for days, hours, minutes and seconds
+//   var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+//   var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  // Display the result in the element with id="timeclock"
+  if (minutes < 5) {
+    document.getElementById("timeclock").innerHTML = "<span style='color: red;'>" + minutes + "m " + seconds + "s " + "</span>";
+  } else {
+    document.getElementById("timeclock").innerHTML = "<span style='color: black;'>" + minutes + "m " + seconds + "s " + "</span>";
+  }
+
+  // If the count down is finished, write some text
+  if (distance < 0) {
+    clearInterval(x);
+    sound.play()
+    alert("Time has runout")
+    document.getElementById("timeclock").innerHTML = "EXPIRED";
+  }
+}, 1000);
+</script>
+<script>
+    function countWord() {
+
+        // Get the input text value
+        var words = document
+            .getElementById("word").value;
+
+        // Initialize the word counter
+        var count = 0;
+
+        // Split the words on each
+        // space character
+        words = words.replace(/\n/g, " ");
+        var split = words.split(' ');
+
+        // Loop through the words and 
+        // increase the counter when 
+        // each split word is not empty
+        for (var i = 0; i < split.length; i++) {
+            if (split[i] != "") {
+                count += 1;
+            }
+        }
+
+        // Display it as output
+        document.getElementById("show")
+            .innerHTML = count;
+    }
+</script>
+<script>
+window.addEventListener('beforeunload', function (e) {
+  // Cancel the event
+  e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
+  // Chrome requires returnValue to be set
+  e.returnValue = 'Do you really want to close this windows?';
+});
+
+</script>
+</body>
+</html>
